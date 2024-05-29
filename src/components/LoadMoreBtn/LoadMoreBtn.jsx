@@ -1,7 +1,16 @@
 import classes from './LoadMoreBtn.module.css';
+import PropTypes from 'prop-types';
 
-const LoadMoreBtn = () => {
-  return <div className={classes.loadMoreBtn}>LoadMoreBtn</div>;
+const LoadMoreBtn = ({ pageCounter }) => {
+  return (
+    <button className={classes.loadMoreBtn} onClick={pageCounter}>
+      Load More
+    </button>
+  );
 };
 
 export default LoadMoreBtn;
+
+LoadMoreBtn.propTypes = {
+  pageCounter: PropTypes.func.isRequired,
+};

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import ImageGallery from '../ImageGallery/ImageGallery';
+import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
 
 const App = () => {
   const [page, setPage] = useState(1);
@@ -29,7 +30,6 @@ const App = () => {
           setLoading(true);
           const imagesData = await handleSearch(searchValue, page);
           const { results, total, total_pages } = imagesData;
-          console.log({ results, total, total_pages });
 
           setImages((prevImages) =>
             page > 1 ? [...prevImages, ...results] : results
@@ -37,8 +37,8 @@ const App = () => {
           setTotalImagesCount(total);
           setTotalPages(total_pages);
         } catch (error) {
-          console.log('error: ', error);
           setError(true);
+          setSearchValue('');
         } finally {
           setLoading(false);
         }
@@ -48,12 +48,24 @@ const App = () => {
     fetchData();
   }, [searchValue, page]);
 
+  const pageCounter = () => {
+    if (totalPages > 0 && page < totalPages) {
+      setPage((prevPage) => prevPage + 1);
+    }
+  };
+
   return (
     <>
       <SearchBar onSearch={setSearchValue} />
-      {loading && <Loader />}
+      {loading && page === 1 && <Loader initial />}
       {error && <ErrorMessage />}
       {images.length > 0 && <ImageGallery images={images} />}
+      {loading && images.length > 1 ? (
+        <Loader />
+      ) : (
+        images.length > 0 &&
+        !loading && <LoadMoreBtn pageCounter={pageCounter} />
+      )}
     </>
   );
 };

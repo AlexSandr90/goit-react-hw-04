@@ -1,3 +1,5 @@
 .loadMoreBtn {
     display: flex;
+    text-transform: capitalize;
+    margin: 30px auto 0;
 }

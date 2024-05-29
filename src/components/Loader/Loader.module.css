@@ -2,6 +2,13 @@
     display: flex;
     width: 100%;
     justify-content: center;
-    height: calc(100vh - 130px);
     align-items: center;
+}
+
+.initialLoader {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
 }
