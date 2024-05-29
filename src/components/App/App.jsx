@@ -6,6 +6,7 @@ import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import ImageGallery from '../ImageGallery/ImageGallery';
 import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
+import ImageModal from '../ImageModal/ImageModal';
 
 const App = () => {
   const [page, setPage] = useState(1);
@@ -15,6 +16,8 @@ const App = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [dataImage, setDataImage] = useState({});
 
   const handleSearch = async (searchValue) => {
     return await fetchImages(searchValue, page);
@@ -22,30 +25,28 @@ const App = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (searchValue.length > 0) {
-        try {
-          setError(false);
-          if (page === 1) setImages([]);
+      try {
+        setError(false);
+        if (page === 1) setImages([]);
 
-          setLoading(true);
-          const imagesData = await handleSearch(searchValue, page);
-          const { results, total, total_pages } = imagesData;
+        setLoading(true);
+        const imagesData = await handleSearch(searchValue, page);
+        const { results, total, total_pages } = imagesData;
 
-          setImages((prevImages) =>
-            page > 1 ? [...prevImages, ...results] : results
-          );
-          setTotalImagesCount(total);
-          setTotalPages(total_pages);
-        } catch (error) {
-          setError(true);
-          setSearchValue('');
-        } finally {
-          setLoading(false);
-        }
+        setImages((prevImages) =>
+          page > 1 ? [...prevImages, ...results] : results
+        );
+        setTotalImagesCount(total);
+        setTotalPages(total_pages);
+      } catch (error) {
+        setError(true);
+        setSearchValue('');
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchData();
+    searchValue.length > 0 && fetchData();
   }, [searchValue, page]);
 
   const pageCounter = () => {
@@ -54,18 +55,33 @@ const App = () => {
     }
   };
 
+  const toggleModalOpen = () => {
+    setIsModalOpen((prevState) => !prevState);
+  };
+
   return (
     <>
       <SearchBar onSearch={setSearchValue} />
       {loading && page === 1 && <Loader initial />}
       {error && <ErrorMessage />}
-      {images.length > 0 && <ImageGallery images={images} />}
+      {images.length > 0 && (
+        <ImageGallery
+          images={images}
+          modalOpened={toggleModalOpen}
+          setDataImage={setDataImage}
+        />
+      )}
       {loading && images.length > 1 ? (
         <Loader />
       ) : (
         images.length > 0 &&
         !loading && <LoadMoreBtn pageCounter={pageCounter} />
       )}
+      <ImageModal
+        isOpen={isModalOpen}
+        dataImage={dataImage}
+        toggleModalOpen={toggleModalOpen}
+      />
     </>
   );
 };
