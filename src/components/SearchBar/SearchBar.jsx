@@ -3,7 +3,7 @@ import classes from './SearchBar.module.css';
 import PropTypes from 'prop-types';
 import toast, { Toaster } from 'react-hot-toast';
 
-const SearchBar = ({ onSearch }) => {
+const SearchBar = ({ onSearch, onPageNumber }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const form = event.target;
@@ -17,6 +17,7 @@ const SearchBar = ({ onSearch }) => {
       return;
     }
     onSearch(searchImage);
+    onPageNumber(1);
     form.reset();
   };
 
@@ -45,4 +46,5 @@ export default SearchBar;
 
 SearchBar.propTypes = {
   onSearch: PropTypes.func.isRequired,
+  onPageNumber: PropTypes.func.isRequired,
 };

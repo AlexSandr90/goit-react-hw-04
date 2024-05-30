@@ -19,8 +19,10 @@ const App = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [dataImage, setDataImage] = useState({});
 
-  const handleSearch = async (searchValue) => {
-    return await fetchImages(searchValue, page);
+  const setImagesArray = (imagesArray, page) => {
+    setImages((prevImages) =>
+      page > 1 ? [...prevImages, ...imagesArray] : imagesArray
+    );
   };
 
   useEffect(() => {
@@ -30,12 +32,10 @@ const App = () => {
         if (page === 1) setImages([]);
 
         setLoading(true);
-        const imagesData = await handleSearch(searchValue, page);
+        const imagesData = await fetchImages(searchValue, page);
         const { results, total_pages } = imagesData;
+        setImagesArray(results, page);
 
-        setImages((prevImages) =>
-          page > 1 ? [...prevImages, ...results] : results
-        );
         setTotalPages(total_pages);
 
         if (page > 1) {
@@ -64,7 +64,7 @@ const App = () => {
 
   return (
     <>
-      <SearchBar onSearch={setSearchValue} />
+      <SearchBar onSearch={setSearchValue} onPageNumber={setPage} />
       {loading && page === 1 && <Loader initial />}
       {error && <ErrorMessage />}
       {images.length > 0 && (
