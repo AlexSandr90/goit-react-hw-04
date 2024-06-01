@@ -7,11 +7,12 @@ const ImageCard = ({ imageItem, modalOpened, setDataImage }) => {
     modalOpened();
   };
   return (
-    <div className={classes.imageCard} onClick={handleImageClick}>
+    <div className={classes.imageCard}>
       <img
         src={imageItem.urls.small}
         alt={imageItem.alt_description}
         className={classes.image}
+        onClick={handleImageClick}
       />
     </div>
   );
